@@ -2,46 +2,59 @@
 
 ## Project Overview
 - **Purpose:** AI-powered, fully automated Forex trading bot using MetaTrader 5, LangChain, and LangGraph.
-- **Key Pairs:** Only trades EURUSD, AUDUSD, GBPUSD, USDCAD, USDCHF, USDJPY, NZDUSD, and XAUUSD (Gold). Never interact with other symbols.
+- **Agent Name:** "Jannat" - The AI trader persona defined in the system prompt.
+- **Key Pairs:** Only trades EURUSD, AUDUSD, GBPUSD, USDCAD, USDCHF, USDJPY, NZDUSD, and XAUUSD (Gold). Symbol list configured via `SYMBOLS` env var in `config/environments.py`.
 - **Architecture:**
-  - `main.py`: Entry point, demonstrates order placement using abstractions.
-  - `agents/`: Contains the main agent logic (`main_agent.py`) and the system prompt (`system_prompt.py`).
-  - `metatrader/`: Handles all MT5 integration (order execution, market data, account info, etc.).
-  - `tools/`: LangChain-compatible tools for agent use (account info, orders, market data, web search).
-  - `config/`: Environment and API configuration.
+  - `main.py`: Entry point that invokes the agent with a simple message.
+  - `agents/`: Main agent logic (`main_agent.py`) and system prompt (`system_prompt.py`).
+  - `metatrader/`: All MT5 integration (account info, orders, market data) via common connection handler.
+  - `tools/`: LangChain `@tool` decorators wrapping MT5 operations and Tavily web search.
+  - `config/`: Environment variables (`environments.py`), API keys, MT5 credentials.
+  - `llm/`: Groq LLM configuration (`groq.py`) - currently using `openai/gpt-oss-120b` model.
 
 ## Agent & Workflow Patterns
-- **Agent Loop:** Built with LangGraph. Alternates between LLM decision (`llm_call`) and tool execution (`tool_node`) until no further tool calls are needed.
-- **System Prompt:** Strictly enforces risk management, symbol whitelist, and workflow (see `agents/system_prompt.py`).
-- **Tool Use:** All data gathering and trading actions must use registered tools (see `tools/`).
-- **Order Execution:** Use `OrderRequest` and `send_order` in `metatrader/order_execution.py` for all trades. Always check return values for success/failure.
+- **LangGraph State Machine:** 
+  - `START` → `llm_call` → conditional edge to `tool_node` or `END`
+  - `tool_node` → back to `llm_call` (loop until no more tool calls)
+  - State tracked in `MessagesState` with message history and `llm_calls` counter.
+- **System Prompt:** Defines risk rules (4-5% per trade, 8-10% total), 10-step workflow, and trading strategies. See `agents/system_prompt.py`.
+- **Tool Registration:** All tools listed in `agents/main_agent.py` and bound to the model via `.bind_tools(tools)`.
+- **Order Execution:** Use `OrderRequest` dataclass and `send_order()` in `metatrader/metatrader.py`. All MT5 functions return `{"success": bool, "error": str}` dicts.
 
 ## Key Conventions & Patterns
-- **Risk Management:**
-  - Max 1% risk per trade, 5% total concurrent risk.
-  - Dynamic position sizing based on account info and stop-loss distance.
+- **MT5 Connection:** All operations call `ensure_mt5_connection()` from `metatrader/common.py` before interacting with MT5.
+- **Order Types:** Mapped via `order_type_map` dict: "BUY", "SELL", "BUY_LIMIT", "SELL_LIMIT", "BUY_STOP", "SELL_STOP".
+- **Risk Management (from system prompt):**
+  - 4-5% risk per trade, 8-10% total concurrent risk.
+  - Volume calculated dynamically from balance, stop-loss distance, pip value, leverage.
+  - Minimum 1:3 risk-reward ratio enforced.
 - **Data Flow:**
-  - Agents use tools to fetch account info, open orders, history, and market data before making decisions.
-  - Web search (via Tavily) is used for fundamental/news analysis.
-- **Error Handling:**
-  - All MT5 actions return structured dicts with `success` and `error` fields. Always check these before proceeding.
-- **Extending Tools:**
-  - New tools must be registered in `agents/main_agent.py` and follow the LangChain `@tool` pattern.
+  1. Agent calls tools to gather account info, positions, history, candle data.
+  2. Performs technical (EMAs, RSI, MACD, Bollinger Bands, ATR) and fundamental analysis (Tavily search).
+  3. Generates trade plan if high-probability setup exists.
+  4. Executes via `send_order_tool`.
+- **Error Handling:** All MT5 operations return structured dicts with `success` and `error` fields. Always check these before proceeding.
 
 ## Developer Workflows
-- **Run the bot:** Activate your Python environment, then run `python main.py`.
-- **Dependencies:** See `requirements.txt`. Uses MetaTrader5, LangChain, LangGraph, pandas, and more.
-- **Testing:** No formal test suite; validate by running `main.py` and checking order results/logs.
-- **Debugging:** Most errors are surfaced via returned dicts from MT5 wrappers. Print or log these for troubleshooting.
+- **Run:** `python main.py` (logs to `agent.log` via Python `logging` module).
+- **Environment:** Requires `.env` file with `GROQ_API_KEY`, `TAVILY_API_KEY`, MT5 credentials (`LOGIN`, `PASSWD`, `SERVER`), `SYMBOLS`, `MAGIC_NUMBER`, `OFF_DAYS`.
+- **Dependencies:** Install via `pip install -r requirements.txt` (MetaTrader5, LangChain, LangGraph, Groq, Tavily, pandas).
+- **Debugging:** Check `agent.log` for agent decisions. MT5 errors are in returned dicts. Use `mt5.last_error()` if connection fails.
+- **Extending Tools:**
+  1. Create new tool function with `@tool` decorator in appropriate `tools/*.py` file.
+  2. Import and add to `tools` list in `agents/main_agent.py`.
+  3. If needed, update system prompt in `agents/system_prompt.py` to describe usage.
 
 ## Integration Points
-- **MetaTrader 5:** All trading logic routes through `metatrader/` modules.
-- **LangChain/LangGraph:** Agent logic and tool orchestration.
-- **Tavily Web Search:** For real-time news/fundamental data (see `tools/tavily_web_search.py`).
+- **MetaTrader 5:** Windows-only library. Requires MT5 terminal installed and logged in.
+- **Groq API:** LLM provider via `langchain_groq.ChatGroq`. Configured in `llm/groq.py`.
+- **Tavily API:** Web search for fundamental analysis via `tavily_web_search_tool`.
+- **LangChain/LangGraph:** Core agent framework. Tools automatically serialized for LLM function calling.
 
 ## Examples
-- To place a trade: Use `OrderRequest` and `send_order` as in `main.py`.
-- To add a tool: Implement in `tools/`, register in `agents/main_agent.py`, and document usage in the system prompt if needed.
+- **Place a trade:** Call `send_order_tool` with symbol, volume, order_type, sl_points, tp_points.
+- **Add a tool:** See `tools/account_tools.py` for reference pattern using `@tool` decorator and MT5 wrapper functions.
+- **Change LLM model:** Edit `llm/groq.py` `model` parameter (e.g., to `"claude-3-5-haiku-20241022"` if switching providers).
 
 ---
-For more details, see `agents/system_prompt.py` for agent behavior and `README.md` for a high-level summary.
+For agent behavior details, see `agents/system_prompt.py`. For symbol whitelist and risk rules, check `config/environments.py`.

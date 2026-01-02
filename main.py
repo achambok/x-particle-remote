@@ -1,13 +1,32 @@
 from agents.main_agent import agent
 from langchain.messages import HumanMessage
+import logging
+import os
+
+# Ensure logs directory exists
+log_dir = "logs"
+os.makedirs(log_dir, exist_ok=True)
+
+# Configure root logger to WARNING to suppress third-party library logs
+logging.basicConfig(
+    filename=os.path.join(log_dir, "agent.log"),
+    level=logging.WARNING,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
+
+# Create custom logger for this application at INFO level
+logger = logging.getLogger("x-particle")
+logger.setLevel(logging.INFO)
 
 
 def main():
     messages = [HumanMessage(content="Hello! Analyze and trade accordingly.")]
+    logger.info("Starting agent...")
 
     messages = agent.invoke({"messages": messages})
-    for m in messages["messages"]:
-        m.pretty_print()
+    last_message = messages["messages"][-1].content
+
+    logger.info(last_message)
 
 
 if __name__ == "__main__":

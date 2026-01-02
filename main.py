@@ -23,10 +23,14 @@ def main():
     messages = [HumanMessage(content="Hello! Analyze and trade accordingly.")]
     logger.info("Starting agent...")
 
-    messages = agent.invoke({"messages": messages})
-    last_message = messages["messages"][-1].content
-
-    logger.info(last_message)
+    try:
+        messages = agent.invoke({"messages": messages}, config={"recursion_limit": 50})
+        logger.info(messages)
+        last_message = messages["messages"][-1].content
+        logger.info(last_message)
+    except Exception as e:
+        logger.error(f"Agent error: {str(e)}")
+        raise
 
 
 if __name__ == "__main__":

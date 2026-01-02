@@ -1,5 +1,6 @@
 from metatrader.account_info import account_info, terminal_info, allow_trading
 from langchain.tools import tool
+import json
 
 
 @tool
@@ -36,7 +37,7 @@ def get_account_info_tool():
     """
 
     info = account_info()
-    return info
+    return json.dumps(info, default=str)
 
 
 @tool
@@ -81,7 +82,7 @@ def get_terminal_info_tool():
     """
 
     info = terminal_info()
-    return info
+    return json.dumps(info, default=str)
 
 
 @tool
@@ -96,4 +97,4 @@ def is_trading_allowed_tool():
     """
 
     info = allow_trading()
-    return info
+    return json.dumps(info, default=str)

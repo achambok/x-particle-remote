@@ -8,6 +8,7 @@ from metatrader.orders import (
     pending_orders_count,
 )
 from langchain.tools import tool
+import json
 
 
 @tool
@@ -20,7 +21,7 @@ def get_active_orders_count_tool():
     Example:
         3
     """
-    return active_orders_count()
+    return json.dumps(active_orders_count(), default=str)
 
 
 @tool
@@ -46,7 +47,7 @@ def get_active_positions_tool():
             ...
         ]
     """
-    return active_positions()
+    return json.dumps(active_positions(), default=str)
 
 
 @tool
@@ -71,7 +72,7 @@ def get_deals_details_tool(ticket: str | int):
             ...
         }
     """
-    return deals_details(ticket=ticket)
+    return json.dumps(deals_details(ticket=ticket), default=str)
 
 
 @tool
@@ -87,7 +88,7 @@ def get_deals_history_count_tool(prev_days: int):
     Example:
         12
     """
-    return deals_history_count(prev_days=prev_days)
+    return json.dumps(deals_history_count(prev_days=prev_days), default=str)
 
 
 @tool
@@ -115,7 +116,7 @@ def get_deals_history_list_tool(prev_days: int = 30):
             ...
         ]
     """
-    return deals_history_list(prev_days=prev_days)
+    return json.dumps(deals_history_list(prev_days=prev_days), default=str)
 
 
 @tool
@@ -141,7 +142,7 @@ def get_pending_orders_tool():
             ...
         ]
     """
-    return pending_orders()
+    return json.dumps(pending_orders(), default=str)
 
 
 @tool
@@ -154,4 +155,4 @@ def get_pending_orders_count_tool():
     Example:
         2
     """
-    return pending_orders_count()
+    return json.dumps(pending_orders_count(), default=str)

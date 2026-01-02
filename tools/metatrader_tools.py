@@ -1,6 +1,7 @@
 from metatrader.metatrader import send_order, close_order, modify_order
 from langchain.tools import tool
 from config.environments import config
+import json
 
 
 @tool
@@ -31,15 +32,18 @@ def send_order_tool(
         dict: Result of the order operation (success, error, ticket, etc.)
     """
 
-    return send_order(
-        symbol=symbol,
-        volume=volume,
-        price=price,
-        sl_points=sl_points,
-        tp_points=tp_points,
-        order_type=order_type,
-        deviation=deviation,
-        comment=comment,
+    return json.dumps(
+        send_order(
+            symbol=symbol,
+            volume=volume,
+            price=price,
+            sl_points=sl_points,
+            tp_points=tp_points,
+            order_type=order_type,
+            deviation=deviation,
+            comment=comment,
+        ),
+        default=str,
     )
 
 
@@ -63,7 +67,7 @@ def close_order_tool(
         dict: Result of the close operation (success, error, etc.)
     """
 
-    return close_order(ticket, deviation, magic, comment)
+    return json.dumps(close_order(ticket, deviation, magic, comment), default=str)
 
 
 @tool
@@ -90,11 +94,14 @@ def modify_order_tool(
         dict: Result of the modify operation (success, error, etc.)
     """
 
-    return modify_order(
-        ticket=ticket,
-        comment=comment,
-        sl=sl,
-        tp=tp,
-        deviation=deviation,
-        magic=magic,
+    return json.dumps(
+        modify_order(
+            ticket=ticket,
+            comment=comment,
+            sl=sl,
+            tp=tp,
+            deviation=deviation,
+            magic=magic,
+        ),
+        default=str,
     )

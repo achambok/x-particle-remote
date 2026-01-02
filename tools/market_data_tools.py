@@ -1,6 +1,7 @@
 from metatrader.market_data import candle_data, symbol_info, tradeable_symbols
 from langchain.tools import tool
 from typing import Optional
+import json
 
 
 @tool
@@ -35,7 +36,7 @@ def get_candle_data_tools(
         ]
     """
     df = candle_data(symbol, timeframe, initial_bar_index, number_of_bars)
-    return df
+    return json.dumps(df, default=str)
 
 
 @tool
@@ -55,7 +56,7 @@ def symbol_info_tool(symbol: str) -> Optional[dict | str]:
             ... (other MetaTrader5 symbol fields)
         }
     """
-    return symbol_info(symbol)
+    return json.dumps(symbol_info(symbol), default=str)
 
 
 @tool
@@ -72,4 +73,4 @@ def tradeable_symbols_tool() -> Optional[list | str]:
             ...
         ]
     """
-    return tradeable_symbols()
+    return json.dumps(tradeable_symbols(), default=str)

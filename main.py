@@ -2,7 +2,6 @@ from agents.main_agent import agent
 from langchain.messages import HumanMessage
 import logging
 import os
-from metatrader.market_data import candle_data
 
 # Ensure logs directory exists
 log_dir = "logs"
@@ -26,7 +25,7 @@ def main():
 
     try:
         messages = agent.invoke({"messages": messages}, config={"recursion_limit": 100})
-        logger.info(messages)
+        # logger.info(messages)
         last_message = messages["messages"][-1].content
         logger.info(last_message)
     except Exception as e:

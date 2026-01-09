@@ -1,4 +1,9 @@
-from metatrader.account_info import account_info, terminal_info, allow_trading
+from metatrader.account_info import (
+    account_info,
+    terminal_info,
+    allow_trading,
+    agent_runner_logger_info,
+)
 from langchain.tools import tool
 import json
 
@@ -97,4 +102,34 @@ def is_trading_allowed_tool():
     """
 
     info = allow_trading()
+    return json.dumps(info, default=str)
+
+
+@tool
+def get_agent_runner_logger_info_tool(index: int = 0):
+    """
+    Retrieve agent log entries from the agent.log file in descending order (newest first).
+    Each log entry includes the complete message with timestamp, level, and multi-line content.
+
+    Args:
+        index (int): The index of the log entry to retrieve (0 = most recent, 1 = second most recent, etc.). Default is 0.
+
+    Returns:
+        dict: Log entry details with keys:
+            - success (bool): Whether the operation succeeded
+            - log_entry (str): The complete log entry text including timestamp and message
+            - index (int): The requested index
+            - total_entries (int): Total number of log entries available
+            - error (str): Error message if success is False
+
+    Example:
+        {
+            'success': True,
+            'log_entry': '2026-01-02 22:46:05,190 | INFO | Account balance $516.65...',
+            'index': 0,
+            'total_entries': 14
+        }
+    """
+
+    info = agent_runner_logger_info(index=index)
     return json.dumps(info, default=str)

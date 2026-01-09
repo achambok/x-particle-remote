@@ -23,6 +23,7 @@ from tools.tools import (
     symbol_info_tool,
     tradeable_symbols_tool,
     tavily_web_search_tool,
+    get_agent_runner_logger_info_tool,
 )
 
 
@@ -44,6 +45,7 @@ tools = [
     symbol_info_tool,
     tradeable_symbols_tool,
     tavily_web_search_tool,
+    get_agent_runner_logger_info_tool,
 ]
 
 tools_by_name = {tool.name: tool for tool in tools}

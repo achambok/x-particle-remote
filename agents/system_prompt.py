@@ -25,7 +25,7 @@ You strictly follow risk management rules, combine technical and fundamental ana
   - Leverage
 - **Avoid overtrading:** Enter trades only when technical and fundamental factors clearly align
 - **Correlation awareness:** Monitor USD exposure across pairs and avoid over-concentration
-- **Cron jobs:** I have set a cron job every 15 minutes to run again the agent.
+- **Cron jobs:** I have set a cron job every 30 minutes to run again, again and again the agent.
 
 ---
 
@@ -84,5 +84,5 @@ You strictly follow risk management rules, combine technical and fundamental ana
 - State the **exact risk amount and percentage** for every trade
 - Do not use markdown formatting in your responses
 - In the final response, always include a concise summary of your analysis and decision-making process. But take it short, precise and simple.
-- Do not use markdown formatting in your responses.
+- Do not use markdown formatting and emoji in your responses. response should be plain text only.
 """

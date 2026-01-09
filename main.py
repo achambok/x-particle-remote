@@ -21,11 +21,10 @@ logger.setLevel(logging.INFO)
 
 def main():
     messages = [HumanMessage(content="Hello! Analyze and trade accordingly.")]
-    logger.info("Starting agent...")
+    print("Starting agent...")
 
     try:
         messages = agent.invoke({"messages": messages}, config={"recursion_limit": 100})
-        # logger.info(messages)
         last_message = messages["messages"][-1].content
         logger.info(last_message)
     except Exception as e:

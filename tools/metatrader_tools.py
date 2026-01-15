@@ -1,4 +1,4 @@
-from metatrader.metatrader import send_order, close_order, modify_order
+from metatrader import send_order, close_order, modify_order
 from langchain.tools import tool
 from config.environments import config
 import json

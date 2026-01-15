@@ -1,4 +1,4 @@
-from metatrader.market_data import candle_data, symbol_info, tradeable_symbols
+from metatrader import candle_data, symbol_info, tradeable_symbols
 from langchain.tools import tool
 from typing import Optional
 import json

@@ -1,4 +1,4 @@
-from metatrader.account_info import (
+from metatrader import (
     account_info,
     terminal_info,
     allow_trading,

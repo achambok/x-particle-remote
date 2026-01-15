@@ -1,4 +1,4 @@
-from metatrader.orders import (
+from metatrader import (
     active_orders_count,
     active_positions,
     deals_details,

@@ -3,9 +3,9 @@ module.exports = {
     {
       name: "x-particle",
       script: "./main.py",
-      interpreter: "F:\\x-particle\\.venv\\Scripts\\python.exe",
-      cron_restart: "*/30 * * * *", // Run every 30 minutes
-      autorestart: false, // Don't auto-restart on completion
+      interpreter: "./.venv/Scripts/python.exe",
+      cron_restart: "*/30 * * * *",
+      autorestart: false,
       watch: false,
       max_memory_restart: "500M",
       env: {
@@ -13,7 +13,7 @@ module.exports = {
       },
       error_file: "./logs/pm2-error.log",
       out_file: "./logs/pm2-out.log",
-      time: true, // Prefix logs with timestamp
+      time: true,
     },
   ],
 };

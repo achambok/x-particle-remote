@@ -27,11 +27,11 @@ class Config:
     PASSWD = os.getenv("PASSWD")
     SERVER = os.getenv("SERVER")
 
-    OFF_DAYS = os.getenv("OFF_DAYS", "Saturday,Sunday").split(",")
-
     if not symbols:
         raise ValueError("Symbols not found")
     SYMBOLS = symbols.split(",")
+
+    FIRST_PAIR = SYMBOLS[0]
 
 
 config = Config()

@@ -37,16 +37,125 @@ def terminal_info():
 
 
 def allow_trading():
-    off_day = config.OFF_DAYS
-    current_day = datetime.now().strftime("%A")
+    """
+    Check if Forex market is currently open.
 
-    if current_day in off_day:
+    Forex Market Hours:
+    - Opens: Sunday 5:00 PM EST (22:00 UTC)
+    - Closes: Friday 5:00 PM EST (22:00 UTC)
+
+    Returns:
+        dict: {'trading_allowed': bool, 'message': str, 'market_status': str, 'next_open': str}
+    """
+    from zoneinfo import ZoneInfo
+
+    # Get current time in EST (Eastern Standard Time)
+    est_tz = ZoneInfo("America/New_York")
+    now_est = datetime.now(est_tz)
+
+    current_day = now_est.strftime("%A")
+    current_hour = now_est.hour
+
+    # Forex Market Hours Logic
+    # CLOSED: Friday 5PM EST to Sunday 5PM EST
+    # OPEN: Sunday 5PM EST to Friday 5PM EST
+
+    market_open = True
+    next_open = None
+    close_reason = None
+
+    if current_day == "Saturday":
+        # Saturday: Market always closed
+        market_open = False
+        close_reason = "Weekend - Market closed all day Saturday"
+        next_open = "Sunday 5:00 PM EST"
+
+    elif current_day == "Sunday":
+        # Sunday: Closed until 5PM EST
+        if current_hour < 17:
+            market_open = False
+            close_reason = "Weekend - Market opens Sunday 5:00 PM EST"
+            hours_until_open = 17 - current_hour
+            next_open = f"Today at 5:00 PM EST (in ~{hours_until_open} hours)"
+        else:
+            # Sunday after 5PM - market is open
+            market_open = True
+
+    elif current_day == "Friday":
+        # Friday: Open until 5PM EST
+        if current_hour >= 17:
+            market_open = False
+            close_reason = "Weekend - Market closed Friday 5:00 PM EST"
+            next_open = "Sunday 5:00 PM EST"
+        else:
+            market_open = True
+
+    else:
+        # Monday to Thursday: Market open 24 hours
+        market_open = True
+
+    if market_open:
+        # Calculate time until market closes (Friday 5PM EST)
+        days_until_friday = (4 - now_est.weekday()) % 7  # Friday is weekday 4
+        if days_until_friday == 0 and current_hour >= 17:
+            days_until_friday = 7
+
+        return {
+            "trading_allowed": True,
+            "message": "Forex market is OPEN. Trading allowed.",
+            "market_status": "OPEN",
+            "current_time_est": now_est.strftime("%Y-%m-%d %H:%M EST"),
+            "current_day": current_day,
+            "closes": "Friday 5:00 PM EST",
+            "session_info": _get_trading_session(current_hour),
+        }
+    else:
         return {
             "trading_allowed": False,
-            "message": f"Trading is not allowed on {current_day}s. Because it's an off day.",
+            "message": close_reason,
+            "market_status": "CLOSED_WEEKEND",
+            "current_time_est": now_est.strftime("%Y-%m-%d %H:%M EST"),
+            "current_day": current_day,
+            "next_open": next_open,
         }
 
-    return {"trading_allowed": True, "message": "Trading is allowed today."}
+
+def _get_trading_session(hour_est: int) -> str:
+    """
+    Determine which major trading session is currently active.
+
+    Sessions (in EST):
+    - Sydney: 5PM - 2AM EST
+    - Tokyo: 7PM - 4AM EST
+    - London: 3AM - 12PM EST
+    - New York: 8AM - 5PM EST
+
+    Best trading times are during session overlaps.
+    """
+    sessions = []
+
+    # Sydney session: 5PM - 2AM EST
+    if hour_est >= 17 or hour_est < 2:
+        sessions.append("Sydney")
+
+    # Tokyo session: 7PM - 4AM EST
+    if hour_est >= 19 or hour_est < 4:
+        sessions.append("Tokyo")
+
+    # London session: 3AM - 12PM EST
+    if 3 <= hour_est < 12:
+        sessions.append("London")
+
+    # New York session: 8AM - 5PM EST
+    if 8 <= hour_est < 17:
+        sessions.append("New York")
+
+    if not sessions:
+        return "Low liquidity period"
+    elif len(sessions) >= 2:
+        return f"Session overlap: {' + '.join(sessions)} (HIGH LIQUIDITY)"
+    else:
+        return f"{sessions[0]} session active"
 
 
 def agent_runner_logger_info(index: int = 0):

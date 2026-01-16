@@ -93,12 +93,42 @@ def get_terminal_info_tool():
 @tool
 def is_trading_allowed_tool():
     """
-    Check if trading is currently allowed in the MetaTrader 5 terminal/account.
+    Check if Forex market is currently open and trading is allowed.
+
+    Forex Market Hours:
+    - OPEN: Sunday 5:00 PM EST to Friday 5:00 PM EST
+    - CLOSED: Friday 5:00 PM EST to Sunday 5:00 PM EST (weekend)
 
     Returns:
-        dict: {'trading_allowed': True/False, 'message': str}
-    Example:
-        {'trading_allowed': True, 'message': 'Trading is allowed today.'}
+        dict: Trading status with keys:
+            - trading_allowed (bool): Whether trading is currently allowed
+            - message (str): Human-readable status message
+            - market_status (str): 'OPEN' or 'CLOSED_WEEKEND'
+            - current_time_est (str): Current time in EST timezone
+            - current_day (str): Current day of week
+            - session_info (str): Active trading session(s) if market is open
+            - next_open (str): When market reopens if currently closed
+
+    Example (Market Open):
+        {
+            'trading_allowed': True,
+            'message': 'Forex market is OPEN. Trading allowed.',
+            'market_status': 'OPEN',
+            'current_time_est': '2026-01-16 10:30 EST',
+            'current_day': 'Friday',
+            'closes': 'Friday 5:00 PM EST',
+            'session_info': 'Session overlap: London + New York (HIGH LIQUIDITY)'
+        }
+
+    Example (Market Closed):
+        {
+            'trading_allowed': False,
+            'message': 'Weekend - Market closed all day Saturday',
+            'market_status': 'CLOSED_WEEKEND',
+            'current_time_est': '2026-01-17 14:00 EST',
+            'current_day': 'Saturday',
+            'next_open': 'Sunday 5:00 PM EST'
+        }
     """
 
     info = allow_trading()

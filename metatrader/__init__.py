@@ -26,6 +26,25 @@ from .orders import (
 # MetaTrader operations
 from .metatrader import OrderRequest, send_order, close_order, modify_order
 
+# Technical indicators (new)
+from .indicators import (
+    calculate_ema,
+    calculate_rsi,
+    calculate_macd,
+    calculate_atr,
+    calculate_bollinger_bands,
+    calculate_support_resistance,
+    calculate_position_size,
+)
+
+# Trade frequency control (new)
+from .trade_frequency import (
+    can_trade_now,
+    log_trade_attempt,
+    get_trading_stats,
+    get_trades_today,
+)
+
 __all__ = [
     # Common
     "ensure_mt5_connection",
@@ -52,4 +71,17 @@ __all__ = [
     "send_order",
     "close_order",
     "modify_order",
+    # Technical indicators
+    "calculate_ema",
+    "calculate_rsi",
+    "calculate_macd",
+    "calculate_atr",
+    "calculate_bollinger_bands",
+    "calculate_support_resistance",
+    "calculate_position_size",
+    # Trade frequency control
+    "can_trade_now",
+    "log_trade_attempt",
+    "get_trading_stats",
+    "get_trades_today",
 ]

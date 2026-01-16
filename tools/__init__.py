@@ -30,6 +30,27 @@ from .orders_tools import (
 # Web search tool
 from .tavily_web_search_tool import tavily_web_search_tool
 
+# Technical analysis tools (new)
+from .technical_analysis_tools import (
+    calculate_technical_indicators_tool,
+    calculate_optimal_position_size_tool,
+    validate_trade_setup_tool,
+    check_trading_conditions_tool,
+)
+
+# Trade frequency tools (new)
+from .trade_frequency_tools import (
+    check_trade_frequency_tool,
+    get_trading_statistics_tool,
+    log_trade_decision_tool,
+)
+
+# Dynamic stops tools (new)
+from .dynamic_stops_tools import (
+    calculate_atr_based_stops_tool,
+    recommend_trade_parameters_tool,
+)
+
 __all__ = [
     # Account tools
     "get_account_info_tool",
@@ -54,4 +75,16 @@ __all__ = [
     "get_deals_history_list_tool",
     # Web search tool
     "tavily_web_search_tool",
+    # Technical analysis tools
+    "calculate_technical_indicators_tool",
+    "calculate_optimal_position_size_tool",
+    "validate_trade_setup_tool",
+    "check_trading_conditions_tool",
+    # Trade frequency tools
+    "check_trade_frequency_tool",
+    "get_trading_statistics_tool",
+    "log_trade_decision_tool",
+    # Dynamic stops tools
+    "calculate_atr_based_stops_tool",
+    "recommend_trade_parameters_tool",
 ]

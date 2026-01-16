@@ -24,6 +24,18 @@ from tools import (
     tradeable_symbols_tool,
     tavily_web_search_tool,
     get_agent_runner_logger_info_tool,
+    # New technical analysis tools
+    calculate_technical_indicators_tool,
+    calculate_optimal_position_size_tool,
+    validate_trade_setup_tool,
+    check_trading_conditions_tool,
+    # New trade frequency tools
+    check_trade_frequency_tool,
+    get_trading_statistics_tool,
+    log_trade_decision_tool,
+    # New dynamic stops tools
+    calculate_atr_based_stops_tool,
+    recommend_trade_parameters_tool,
 )
 
 
@@ -46,6 +58,18 @@ tools = [
     tradeable_symbols_tool,
     tavily_web_search_tool,
     get_agent_runner_logger_info_tool,
+    # New technical analysis tools
+    calculate_technical_indicators_tool,
+    calculate_optimal_position_size_tool,
+    validate_trade_setup_tool,
+    check_trading_conditions_tool,
+    # New trade frequency tools
+    check_trade_frequency_tool,
+    get_trading_statistics_tool,
+    log_trade_decision_tool,
+    # New dynamic stops tools
+    calculate_atr_based_stops_tool,
+    recommend_trade_parameters_tool,
 ]
 
 tools_by_name = {tool.name: tool for tool in tools}

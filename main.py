@@ -20,7 +20,20 @@ logger.setLevel(logging.INFO)
 
 
 def main():
-    messages = [HumanMessage(content="Hello! Analyze and trade accordingly.")]
+    messages = [
+        HumanMessage(
+            content="""
+                Execute the mandatory 5-phase trading workflow:
+                1. Run health checks (account status, trade frequency, existing positions)
+                2. Perform technical analysis on all symbols
+                3. Check for high-impact news events
+                4. Validate any potential trade setup
+                5. Make a final decision: EXECUTE or NO TRADE
+
+                Remember: NO TRADE is better than a bad trade. Most runs should result in NO TRADE.
+                """
+        )
+    ]
     print("Starting agent...")
 
     try:

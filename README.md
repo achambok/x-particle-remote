@@ -56,7 +56,7 @@ pm2 start ecosystem.config.js
 
 - **MetaTrader 5**: Trading platform
 - **LangChain & LangGraph**: AI agent framework
-- **Groq API**: LLM provider (gpt-oss-120b model)
+- **DashScope/QWEN API**: LLM provider; set `DASHSCOPE_API_KEY` in `.env` and configure model in `llm/groq.py` (now uses `ChatOpenAI`).
 - **Tavily API**: Web search for fundamental analysis
 - **Pandas & NumPy**: Data analysis and calculations
 

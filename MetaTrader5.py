@@ -86,8 +86,9 @@ def history_deals_get(*args, **kwargs):
 
 
 def symbol_info(symbol: str) -> Any:
-    # return a dummy object with required attributes
-    return _Dummy(visible=True, point=0.0, filling_mode=0)
+    # return a dummy object with required attributes for trading.
+    # Provide a small non-zero point and a common filling mode bitmask.
+    return _Dummy(visible=True, point=0.00001, filling_mode=7)
 
 
 def symbol_select(symbol: str, show: bool) -> bool:
@@ -98,8 +99,31 @@ def symbol_info_tick(symbol: str) -> Any:
     return _Dummy(ask=0.0, bid=0.0)
 
 
+import random
+import time
+
 def copy_rates_from_pos(symbol, timeframe, start, count):
-    return []
+    # Generate synthetic candlestick data for testing
+    # Each record must match MT5 rate fields: time, open, high, low, close, tick_volume, spread, real_volume
+    data = []
+    now = int(time.time())
+    for i in range(count):
+        t = now - (count - i) * 60  # one-minute spacing
+        o = round(1.1000 + random.uniform(-0.001, 0.001), 5)
+        h = round(o + random.uniform(0, 0.0005), 5)
+        l = round(o - random.uniform(0, 0.0005), 5)
+        c = round(random.uniform(l, h), 5)
+        data.append(_Dummy(
+            time=t,
+            open=o,
+            high=h,
+            low=l,
+            close=c,
+            tick_volume=random.randint(100,1000),
+            spread=random.randint(1,5),
+            real_volume=random.randint(100,1000),
+        ))
+    return data
 
 
 def account_info():

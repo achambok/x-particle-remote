@@ -18,6 +18,14 @@ class Config:
     if not DASHSCOPE_API_KEY:
         raise ValueError("DASHSCOPE_API_KEY not found in environment variables")
 
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+    if not OPENROUTER_API_KEY:
+        raise ValueError("OPENROUTER_API_KEY not found in environment variables")
+
+    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
+    if not MISTRAL_API_KEY:
+        raise ValueError("MISTRAL_API_KEY not found in environment variables")
+
     TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
     if not TAVILY_API_KEY:
         raise ValueError("TAVILY_API_KEY not found in environment variables")

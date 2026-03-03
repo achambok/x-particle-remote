@@ -116,3 +116,4 @@ The agent is designed to be selective, patient, and disciplined - only trading w
 **Last Updated:** January 16, 2026  
 **Version:** 2.0 (Major Upgrade)
 
+"# x-particle-remote" 
